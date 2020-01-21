@@ -20,8 +20,8 @@ document.getElementById("delayer").addEventListener('input', function(event) {
 document.querySelector ("button").onclick = async ()=> {
 	
 	//Create primary and secondary audio context
-	const primary = new window.AudioContext();
-	const secondary = new window.AudioContext();
+	const primary = new window.AudioContext({sampleRate: 48000});
+	const secondary = new window.AudioContext({sampleRate: 48000});
 	
 	// load dtmf sound
 	const primarySource = primary.createBufferSource();
