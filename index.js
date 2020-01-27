@@ -109,6 +109,7 @@ document.querySelector ("button").onclick = async ()=> {
 		let prevCount = 0;
 		setInterval(async () => {
 			const stats = await receiver.getStats(track);
+			//const recv = await receiver.getReceivers()[0].getStats();
 			for (const [key,val] of stats)
 			{
 				if (val.type== "track")
@@ -128,7 +129,7 @@ document.querySelector ("button").onclick = async ()=> {
 				}
 			}
 			
-		}, 100);
+		}, 1);
 	};
 	
 	//Interchange candidates
@@ -139,12 +140,12 @@ document.querySelector ("button").onclick = async ()=> {
 	sender.addTrack(primaryDestination.stream.getAudioTracks()[0]);
 	
 	const offer = await sender.createOffer();
-	offer.sdp = offer.sdp.replace("useinbandfec=1", "useinbandfec=1; stereo=1")
+	offer.sdp = offer.sdp.replace("useinbandfec=1", "useinbandfec=1; stereo=1; ptime=10")
 	await sender.setLocalDescription(offer);
 	await receiver.setRemoteDescription(offer);
 	
 	const answer = await receiver.createAnswer();
-	answer.sdp = answer.sdp.replace("useinbandfec=1", "useinbandfec=1; stereo=1")
+	answer.sdp = answer.sdp.replace("useinbandfec=1", "useinbandfec=1; stereo=1; ptime=10")
 	await receiver.setLocalDescription(answer);
 	await sender.setRemoteDescription(answer);
 
