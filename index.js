@@ -21,12 +21,16 @@ document.querySelector ("button").onclick = async ()=> {
 	
 	//Create primary and secondary audio context
 	const primary = new window.AudioContext({sampleRate: 48000});
-	const secondary = new window.AudioContext({sampleRate: 48000});
 	
 	// load dtmf sound
-	const primarySource = primary.createBufferSource();
-	const primaryDestination = primary.createMediaStreamDestination();
+	const primarySource = window.primarySource = primary.createBufferSource();
+	const primaryDestination = window.primaryDestination = primary.createMediaStreamDestination();
 	const primaryDestinationDelayed = primary.createMediaStreamDestination();
+	
+	await primary.audioWorklet.addModule('stereo-switcher.js');
+	const switcher = new AudioWorkletNode(primary, 'stereo-switcher',{
+		outputChannelCount : [2]
+	});
 	
 	//load dtm wav
 	const request = new XMLHttpRequest();
@@ -51,13 +55,14 @@ document.querySelector ("button").onclick = async ()=> {
 	//Create delay node
 	delayNode = primary.createDelay();
 	//Set initial delay
-	setDelay(0.0);
+	setDelay(0.155);
 	
 	//Creat primary graph
 	primarySource
 		.connect(delayNode)
 		.connect(primaryDestinationDelayed);
 	primarySource
+		.connect(switcher)
 		.connect(primaryDestination);
 	//Play primary dtmf
 	{
@@ -68,12 +73,6 @@ document.querySelector ("button").onclick = async ()=> {
 		audio.play();
 	}
 	
-	//Create destination on secondary 
-	const secondaryDestination = secondary.createMediaStreamDestination();
-	
-	//Create stereo switcher for secondary context
-	await secondary.audioWorklet.addModule('stereo-switcher.js');
-	const switcher = new AudioWorkletNode(secondary, 'stereo-switcher');
 	
 	//Create pcs
 	const sender	= window.sender   = new RTCPeerConnection();
@@ -86,21 +85,8 @@ document.querySelector ("button").onclick = async ()=> {
 		const stream = window.stream = new MediaStream([track]);
 		
 		//show stream
-		const dummy = document.createElement("audio");
-		dummy.srcObject  = stream;
-		dummy.muted = true;
-		dummy.play();
-		
-		//Create web audio source from webrtc track
-		const secondarySource = secondary.createMediaStreamSource(stream);
-		//Create secondary graph
-		secondarySource
-			.connect(switcher)
-			.connect(secondaryDestination);
-		
-		//show stream
 		const audio = document.createElement("audio");
-		audio.srcObject  = secondaryDestination.stream;
+		audio.srcObject  = stream;
 		audio.muted = false;
 		audio.play();
 		
@@ -122,7 +108,9 @@ document.querySelector ("button").onclick = async ()=> {
 						jitter = (val.jitterBufferDelay-prevDelay)/(val.jitterBufferEmittedCount-prevCount);
 						document.getElementById("jitter").innerText = jitter.toFixed(3) +"s";
 						//Set it
-						delayNode.delayTime.value = delay + jitter;
+						delayNode.delayTime.value = delay;
+						receiver.getReceivers()[0].jitterBufferDelayHint = 0.200;
+						//delayNode.delayTime.value = delay + jitter;
 						document.getElementById("total").innerText = delayNode.delayTime.value.toFixed(3) +"s";
 					}
 					//Update values

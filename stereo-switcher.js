@@ -7,7 +7,10 @@ class StereoSwitcher extends AudioWorkletProcessor
 		const output = outputs[0];
 		//Switch stereo channels
 		for (let channel = 0; channel < output.length; ++channel)
-			output[channel ? 0 : 1].set(input[channel]);
+			if (input.length>1)
+				output[channel].set(input[channel ? 0 : 1]);
+			else
+				output[channel].set(input[0]);
 
 		return true;
 	}
