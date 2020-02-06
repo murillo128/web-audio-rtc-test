@@ -1,6 +1,7 @@
 
 let delayNode;
 let delay = 0;
+let jitterHint = 0;
 let jitter = 0;
 
 function setDelay(val)
@@ -12,8 +13,20 @@ function setDelay(val)
 	document.getElementById("delay").innerText = val.toFixed(3) +"s";
 }
 
+function setJitter(val)
+{
+	//Set it
+	jitterHint = val;
+	//Display
+	document.getElementById("jitter-hint").innerText = val.toFixed(3) +"s";
+}
+
 document.getElementById("delayer").addEventListener('input', function(event) {
 	return setDelay(parseFloat(event.target.value));	
+}, false);
+
+document.getElementById("jitterHinter").addEventListener('input', function(event) {
+	return setJitter(parseFloat(event.target.value));	
 }, false);
 
 
@@ -55,7 +68,8 @@ document.querySelector ("button").onclick = async ()=> {
 	//Create delay node
 	delayNode = primary.createDelay();
 	//Set initial delay
-	setDelay(0.155);
+	setDelay(0.200);
+	setJitter(0.200);
 	
 	//Creat primary graph
 	primarySource
@@ -109,9 +123,7 @@ document.querySelector ("button").onclick = async ()=> {
 						document.getElementById("jitter").innerText = jitter.toFixed(3) +"s";
 						//Set it
 						delayNode.delayTime.value = delay;
-						receiver.getReceivers()[0].jitterBufferDelayHint = 0.200;
-						//delayNode.delayTime.value = delay + jitter;
-						document.getElementById("total").innerText = delayNode.delayTime.value.toFixed(3) +"s";
+						receiver.getReceivers()[0].playoutDelayHint = receiver.getReceivers()[0].jitterBufferDelayHint = jitterHint;
 					}
 					//Update values
 					prevDelay = val.jitterBufferDelay;
