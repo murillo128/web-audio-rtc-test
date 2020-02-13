@@ -124,6 +124,8 @@ document.querySelector ("button").onclick = async ()=> {
 						//Set it
 						delayNode.delayTime.value = delay;
 						receiver.getReceivers()[0].playoutDelayHint = receiver.getReceivers()[0].jitterBufferDelayHint = jitterHint;
+						receiver.getReceivers()[0].minPlayoutDelay = Math.max(jitterHint-0.015,0);
+						receiver.getReceivers()[0].maxPlayoutDelay = Math.min(jitterHint+0.015,1);
 					}
 					//Update values
 					prevDelay = val.jitterBufferDelay;
@@ -140,6 +142,7 @@ document.querySelector ("button").onclick = async ()=> {
 	
 	//add audio context dest stream
 	sender.addTrack(primaryDestination.stream.getAudioTracks()[0]);
+	another.addTrack(primaryDestination.stream.getAudioTracks()[0]);
 	
 	const offer = await sender.createOffer();
 	offer.sdp = offer.sdp.replace("useinbandfec=1", "useinbandfec=0; dtx=0; stereo=1; ptime=10; maxptime=10;")
