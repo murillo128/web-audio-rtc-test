@@ -9,7 +9,7 @@ class StereoSwitcher extends AudioWorkletProcessor
 		for (let channel = 0; channel < output.length; ++channel)
 			if (input.length>1)
 				output[channel].set(input[channel ? 0 : 1]);
-			else
+			else if (input.length)
 				output[channel].set(input[0]);
 
 		return true;
