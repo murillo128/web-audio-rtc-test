@@ -47,7 +47,7 @@ document.querySelector ("button").onclick = async ()=> {
 	
 	//load dtm wav
 	const request = new XMLHttpRequest();
-	request.open('GET', 'untitled.wav', true);
+	request.open('GET', '20200619 1349 Recording.wav', true);
 	request.responseType = 'arraybuffer';
 	request.onload = ()=>{
 		primary.decodeAudioData(request.response, 
@@ -124,7 +124,7 @@ document.querySelector ("button").onclick = async ()=> {
 						//Set it
 						delayNode.delayTime.value = delay;
 						receiver.getReceivers()[0].playoutDelayHint = receiver.getReceivers()[0].jitterBufferDelayHint = jitterHint;
-						receiver.getReceivers()[0].minPlayoutDelay = Math.max(jitterHint-0.015,0);
+						receiver.getReceivers()[0].minPlayoutDelay = Math.min(Math.max(jitterHint-0.015,0),40);
 						receiver.getReceivers()[0].maxPlayoutDelay = Math.min(jitterHint+0.030,1);
 					}
 					//Update values
