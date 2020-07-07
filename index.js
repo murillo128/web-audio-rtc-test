@@ -47,7 +47,7 @@ document.querySelector ("button").onclick = async ()=> {
 	
 	//load dtm wav
 	const request = new XMLHttpRequest();
-	request.open('GET', '20200619 1349 Recording.wav', true);
+	request.open('GET', 'untitled.wav', true);
 	request.responseType = 'arraybuffer';
 	request.onload = ()=>{
 		primary.decodeAudioData(request.response, 
