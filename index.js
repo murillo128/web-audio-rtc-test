@@ -3,6 +3,9 @@ let delayNode;
 let delay = 0;
 let jitterHint = 0;
 let jitter = 0;
+let jitterHintMaxDelta = 0.015;
+let jitterHintMinDelta = 0.010;
+let jitterHintMin = 0.040;
 
 function setDelay(val)
 {
@@ -124,8 +127,8 @@ document.querySelector ("button").onclick = async ()=> {
 						//Set it
 						delayNode.delayTime.value = delay;
 						receiver.getReceivers()[0].playoutDelayHint = receiver.getReceivers()[0].jitterBufferDelayHint = jitterHint;
-						receiver.getReceivers()[0].minPlayoutDelay = Math.min(Math.max(jitterHint-0.015,0),0.040);
-						receiver.getReceivers()[0].maxPlayoutDelay = Math.min(jitterHint+0.030,1);
+						receiver.getReceivers()[0].minPlayoutDelay = Math.min(Math.max(jitterHint-jitterHintMinDelta,0),jitterHintMin);
+						receiver.getReceivers()[0].maxPlayoutDelay = Math.min(jitterHint+jitterHintMaxDelta,1);
 					}
 					//Update values
 					prevDelay = val.jitterBufferDelay;
