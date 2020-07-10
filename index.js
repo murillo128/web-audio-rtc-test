@@ -124,7 +124,7 @@ document.querySelector ("button").onclick = async ()=> {
 						//Set it
 						delayNode.delayTime.value = delay;
 						receiver.getReceivers()[0].playoutDelayHint = receiver.getReceivers()[0].jitterBufferDelayHint = jitterHint;
-						receiver.getReceivers()[0].minPlayoutDelay = Math.min(Math.max(jitterHint-0.015,0),40);
+						receiver.getReceivers()[0].minPlayoutDelay = Math.min(Math.max(jitterHint-0.015,0),0.040);
 						receiver.getReceivers()[0].maxPlayoutDelay = Math.min(jitterHint+0.030,1);
 					}
 					//Update values
